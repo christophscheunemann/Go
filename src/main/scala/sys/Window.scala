@@ -9,7 +9,7 @@ import java.awt.Dimension
 import rescala._
 
 
-class Window(var score: String, var fields: Array[Array[Field]], var stone: Field) {
+class Window(var score: String, var fields: Array[Array[Field]], var stone: Field, var id: Int) {
   val panel = new Panel {
   preferredSize = new Dimension(windowHeight, windowLength)
 
@@ -37,6 +37,7 @@ class Window(var score: String, var fields: Array[Array[Field]], var stone: Fiel
        g.fillOval(stone.x + 2, stone.y + 2 , ((windowLength / gridCount) - 4), ((windowHeight - offSet) / gridCount) - 4)
        println(stone.toString)
      }
+     
      if (stone != null && stone.c == 2) {
          g.setColor(Color.RED)
          //Circle just a little bit smaller than the Field
