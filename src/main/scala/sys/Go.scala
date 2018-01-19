@@ -117,26 +117,23 @@ object Go {
       */
 
       //Initial If to see if the y signal is less than the Grid start at offSet (50 atm), then null is returned
-      // Mach ich jetz fertig wolltet ja erstmal nen commit :P
-      /*
-      if (Signal { (y()(0) } < 50) || Signal { (y()(1) } < 50 )) {
-        println("here")
+      if ((Signal {y()(0)}.now < 50)|| (Signal{y()(1)}.now < 50 )) {
         Signal {
           //is catched in Window.scala => stone must not be null
           null
         }
-      }
-      */
+      } else {
 
 
-
-       if (Signal {remote[Client].connected() } == Signal {players()(0)}) {
+       if (true) {
          var blackStone = new Stone(Signal { 0 }, Signal { 0 })
-         val newStone = new Stone(Signal { x()(0) }, Signal{ y()(0)})
+         val newStone = new Stone(Signal { 0 }, Signal{0})
          for(x <- 0 to gridCount-1 ) {
               for (y <- 0 to gridCount-1) {
                 if (this.playerFields(x)(y).contains(Point(newStone.x.now, newStone.y.now))) {
+                    //recommended in scala to create a new object each time
                     blackStone = new Stone(Signal { this.playerFields(x)(y).x}, Signal { this.playerFields(x)(y).y})
+                    this.playerFields(x)(y) = new Field(this.playerFields(x)(y).x, this.playerFields(x)(y).y, length, height, true, 1)
                 }
               }
             }
@@ -149,12 +146,14 @@ object Go {
          for(x <- 0 to gridCount-1 ) {
               for (y <- 0 to gridCount-1) {
                 if (this.playerFields(x)(y).contains(Point(newStone.x.now, newStone.y.now))) {
+                    //recommended in scala to create a new object each time
                     whiteStone = new Stone(Signal { this.playerFields(x)(y).x}, Signal { this.playerFields(x)(y).y})
+                    this.playerFields(x)(y) = new Field(this.playerFields(x)(y).x, this.playerFields(x)(y).y, length, height, true, 2)
                 }
               }
             }
             Signal {
-              Field(whiteStone.x(), whiteStone.y(), windowLength / gridCount, ((windowHeight - offSet) / gridCount), true, 2)
+              Field(whiteStone.x(), whiteStone.y(), length, height, true, 2)
             }
           } else {
             Signal{
@@ -162,6 +161,7 @@ object Go {
             null
           }
         }
+      }
      }
 
     val blackPlayerPoints = placed[Server].local {
@@ -193,6 +193,7 @@ object Go {
           points
         }
     }
+
     //score as Signal String at Server, iterates if a player sets a Stone
   val score = placed[Server] {
     implicit! =>
@@ -202,17 +203,6 @@ object Go {
     }
   }
 
-  val countStones = placed[Server].local {
-    implicit! =>
-    var blackStones = 0
-    var whiteStones = 0
-
-
-  }
-
-  //
-  //init FrontEnd of Client
-  //
   val frontEnd = placed[Client].local {
     implicit! =>
     peer.createFrontEnd(score.asLocal, fields.asLocal, stone.asLocal)

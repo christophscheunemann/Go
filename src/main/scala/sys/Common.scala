@@ -5,6 +5,8 @@ package object sys {
   val windowLength = 1000
   val gridCount = 10
   val offSet = 50
+  val length = windowLength / gridCount
+  val height = ((windowHeight - offSet) / gridCount)
   val initStone = Field(0, 0, 0, 0, false, 0)
   val initPos = Point(0,0)
 
