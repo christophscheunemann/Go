@@ -96,48 +96,48 @@ object Go {
             client => (clientClick from client).asLocal()
           } getOrElse false }
         }
-
-        println("playing: " + Signal { isPlaying() })
-        println("print player pos x: " + Signal {x()(currentPlayer)}.now)
-        println("print player pos y: " + Signal {y()(currentPlayer)}.now)
-
+        println("curplayer: " + currentPlayer)
+        Signal { println("print player pos x: " + x()(currentPlayer)) }
+        Signal { println("print player pos y: " + y()(currentPlayer)) }
+        println("-----------------------------")
         //Initial If to see if the y signal is less than the Grid start at offSet (50 atm), then null is returned
-        if ((Signal {y()(0)}.now < 50)|| (Signal{y()(1)}.now < 50 )) {
+        val result = Signal { if ( y()(currentPlayer) <= 49) {
 
           //is catched in Window.scala => stone must not be null
           initField
 
         } else {
-          if (Signal { clicked()(currentPlayer)}.now) {
-            println("clicked: " + currentPlayer)
+          if (clicked()(currentPlayer)) {
             var currentStone = initStone
-            val newStone = new Stone(Signal { x()(currentPlayer) }, Signal{ y()(currentPlayer)})
+            val newStone = new Stone(x()(currentPlayer) , y()(currentPlayer))
             for(x <- 0 to gridCount-1 ) {
               for (y <- 0 to gridCount-1) {
-                if (this.playerFields(x)(y).contains(Point(newStone.x.now, newStone.y.now))) {
+                if (this.playerFields(x)(y).contains(Point(newStone.x, newStone.y))) {
                   //recommended in scala to create a new object each time
-                  currentStone = new Stone(Signal { this.playerFields(x)(y).x}, Signal { this.playerFields(x)(y).y})
+                  currentStone = new Stone(this.playerFields(x)(y).x, this.playerFields(x)(y).y)
                   this.playerFields(x)(y) = new Field(this.playerFields(x)(y).x, this.playerFields(x)(y).y, length, height, true, currentPlayer + 1)
                 }
               }
             }
             //set nextPlayer
             currentPlayer = currentPlayer + 1 % 2
-
-            Field(currentStone.x.now, currentStone.y.now, length, height, true, currentPlayer + 1)
-
+            Field(currentStone.x, currentStone.y, length, height, true, currentPlayer + 1)
           } else {
-
             //is catched in Window.scala => stone must not be null
             initField
-
           }
         }
-      } else {
-        stone
       }
-    }
+      /*TODO:
+      catchen oder empty Signal wegbekommen
+      */
+        result.now
+  } else {
+    stone
+
   }
+}
+}
 
 val blackPlayerPoints = placed[Server].local {
   implicit! =>
