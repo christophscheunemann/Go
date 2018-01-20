@@ -30,14 +30,16 @@ class Window(var score: String, var fields: Array[Array[Field]], var stone: Fiel
       //GRAY == 0
       //BLACK == 1
       //WHITE == 2
-
+      if (stone == null) {
+        println("stone is null")
+      }
       if (stone != null && stone.c == 1) {
        g.setColor(Color.BLACK)
        //Circle just a little bit smaller than the Field
        g.fillOval(stone.x + 2, stone.y + 2 , ((windowLength / gridCount) - 4), ((windowHeight - offSet) / gridCount) - 4)
        println(stone.toString)
      }
-     
+
      if (stone != null && stone.c == 2) {
          g.setColor(Color.RED)
          //Circle just a little bit smaller than the Field

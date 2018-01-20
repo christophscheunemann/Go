@@ -102,12 +102,12 @@ object Go {
         println("-----------------------------")
         //Initial If to see if the y signal is less than the Grid start at offSet (50 atm), then null is returned
         val result = Signal { if ( y()(currentPlayer) <= 49) {
-
+          println("y value of click is below 50")
           //is catched in Window.scala => stone must not be null
           initField
-
         } else {
           if (clicked()(currentPlayer)) {
+            println("clicked by currentplayer (" + currentPlayer + ")")
             var currentStone = initStone
             val newStone = new Stone(x()(currentPlayer) , y()(currentPlayer))
             for(x <- 0 to gridCount-1 ) {
@@ -120,9 +120,10 @@ object Go {
               }
             }
             //set nextPlayer
-            currentPlayer = currentPlayer + 1 % 2
+            currentPlayer = (currentPlayer + 1) % 2
             Field(currentStone.x, currentStone.y, length, height, true, currentPlayer + 1)
           } else {
+            println("Currentplayer(" + currentPlayer + ") didnt click")
             //is catched in Window.scala => stone must not be null
             initField
           }

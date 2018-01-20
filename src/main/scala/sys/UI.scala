@@ -26,8 +26,11 @@ object UI {
   val currentMousePosition = mousePositionChanged latest Point(0,0)
   val mousePosition = tick snapshot currentMousePosition
 
+  //for clicks of players
+  private val mouseClickedChanged = Evt[Boolean]
 
-  var mouseClicked = Signal { false }
+  val currentMouseClicked = mouseClickedChanged latest false
+  var mouseClicked = tick snapshot currentMouseClicked
 
   var id =  Signal { 0 }
 
@@ -36,10 +39,9 @@ object UI {
         mousePositionChanged(Point(e.point.x, e.point.y))
       case e: MouseClicked =>
       println("clicked Mouse")
-      mouseClicked = Signal { true }
-      case e: MouseReleased =>
-      println("released Mouse")
-      mouseClicked = Signal { false }
+      mouseClickedChanged(true)
+      Thread.sleep(50)
+      mouseClickedChanged(false)
     }
 }
 
