@@ -9,45 +9,40 @@ import java.awt.Dimension
 import rescala._
 
 
-class Window(var score: String, var fields: Array[Array[Field]], var stone: Field, var id: Int) {
-  val panel = new Panel {
-  preferredSize = new Dimension(windowHeight, windowLength)
+class Window(var score: String) {
+  val stone = Array.ofDim[Stone](gridCount, gridCount)
 
+  val panel = new Panel {
+    preferredSize = new Dimension(windowHeight, windowLength)
 
     override def paintComponent(g: Graphics2D) {
       super.paintComponent(g)
 
+
       g. drawString(score, windowLength / 2, 25)
-      g.setColor(Color.BLACK)
 
-      for(x <- 0 to gridCount-1 ) {
-        for (y <- 0 to gridCount-1) {
-           g.drawRect(fields(x)(y).x, fields(x)(y).y, windowLength / gridCount, (windowHeight - offSet) / gridCount)
-        }
-      }
-
-      //Colorcodes as explained in Fields and Stone,
+      //Colorcodes,
       //GRAY == 0
       //BLACK == 1
       //WHITE == 2
-      if (stone == null) {
-        println("stone is null")
-      }
-      if (stone != null && stone.c == 1) {
-       g.setColor(Color.BLACK)
-       //Circle just a little bit smaller than the Field
-       g.fillOval(stone.x + 2, stone.y + 2 , ((windowLength / gridCount) - 4), ((windowHeight - offSet) / gridCount) - 4)
-       println(stone.toString)
-     }
 
-     if (stone != null && stone.c == 2) {
-         g.setColor(Color.RED)
-         //Circle just a little bit smaller than the Field
-         g.fillOval(stone.x + 2, stone.y + 2 , ((windowLength / gridCount) - 4), ((windowHeight - offSet) / gridCount) - 4)
-         println(stone.toString)
+      for(x <- 0 to gridCount-1 ) {
+        for (y <- 0 to gridCount-1) {
+          g.setColor(Color.BLACK)
+          g.drawRect(x * length , offSet + (y * height), length, height)
+          if (stone(x)(y) != null) {
+            val tmp = stone(x)(y)
+            if (tmp.c == 1) {
+              g.setColor(Color.BLACK)
+            } else if (tmp.c == 2){
+              g.setColor(Color.RED)
+            }
+            g.fillOval(tmp.x + 2, tmp.y + 2 , length - 4, height - 4)
+          }
+        }
       }
-   }
- }
+    }
+  }
 
   val frame = new MainFrame {
     title = "Go"

@@ -11,13 +11,9 @@ import java.awt.Color
 
 object UI {
   trait FrontEnd extends FrontEndHolder {
-    def createFrontEnd(score: Signal[String], fields: Signal[Array[Array[Field]]], stone: Signal[Field], id: Signal[Int]) = {
-    UI.id = id
-    new UI(score, fields, stone, id)
-  }
+    def createFrontEnd(score: Signal[String], stone: Signal[Stone]) = new UI(score, stone)
     lazy val mousePosition = UI.mousePosition
     lazy val mouseClicked = UI.mouseClicked
-    lazy val id = UI.id
   }
 
   //for mousepostion of players
@@ -32,22 +28,19 @@ object UI {
   val currentMouseClicked = mouseClickedChanged latest false
   var mouseClicked = tick snapshot currentMouseClicked
 
-  var id =  Signal { 0 }
-
     val reaction: Reaction = {
       case e: MouseMoved =>
         mousePositionChanged(Point(e.point.x, e.point.y))
       case e: MouseClicked =>
-      println("clicked Mouse")
       mouseClickedChanged(true)
       Thread.sleep(50)
       mouseClickedChanged(false)
     }
 }
 
-class UI(score: Signal[String], fields: Signal[Array[Array[Field]]], stone: Signal[Field], id: Signal[Int]) extends FrontEnd {
+class UI(score: Signal[String], stone: Signal[Stone]) extends FrontEnd {
   lazy val window = {
-    val window = new Window((score withDefault "").now, fields = null, stone = null, id = 0)
+    val window = new Window((score withDefault "").now)
 
         window.panel.listenTo(window.panel.mouse.moves, window.panel.mouse.clicks)
         window.panel.reactions += UI.reaction
@@ -64,18 +57,13 @@ class UI(score: Signal[String], fields: Signal[Array[Array[Field]]], stone: Sign
       }
     }
 
-    fields.changed += {
-      fields => Swing onEDT {
-        window.fields = fields
-      }
-    }
-
     stone.changed += {
       stone => Swing onEDT {
-        window.stone = stone
-        window
+        if (stone != null) {
+        window.stone(stone.x)(stone.y) = stone
       }
     }
+  }
 
   Swing onEDT {
     window.frame.visible = true

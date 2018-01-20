@@ -9,8 +9,7 @@ import java.awt.Color
 trait FrontEnd
 
 trait FrontEndHolder {
-  def createFrontEnd(score: Signal[String], fields: Signal[Array[Array[Field]]], stone: Signal[Field], id: Signal[Int]): FrontEnd
+  def createFrontEnd(score: Signal[String], stone: Signal[Stone]): FrontEnd
   val mousePosition: Signal[Point]
   val mouseClicked: Signal[Boolean]
-  val id: Signal[Int]
 }

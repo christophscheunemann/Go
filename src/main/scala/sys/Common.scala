@@ -7,9 +7,8 @@ package object sys {
   val offSet = 50
   val length = windowLength / gridCount
   val height = ((windowHeight - offSet) / gridCount)
-  val initField = Field(0, 0, 0, 0, false, 0)
   val initPos = Point(0,0)
-  val initStone = Stone( 0, 0)
+  val initStone = Stone( 0, 0, 0)
 
   private lazy val event = Evt[Unit]
 
